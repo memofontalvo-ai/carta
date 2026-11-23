@@ -4,6 +4,10 @@ import { $, esc, fmt, byOrden, AJUSTES_BASE } from "./shared.js";
 import { VERSION } from "./version.js";
 
 const app = $("#app");
+// Modo edición: la carta se abre dentro del panel (index.html?editar=1) y al tocar un plato avisa al panel.
+const EDITAR = new URLSearchParams(location.search).get("editar") === "1" && window.parent !== window;
+if (EDITAR) document.body.classList.add("editmode");
+const avisar = m => window.parent.postMessage(m, location.origin);
 if (!configured) {
   app.innerHTML = '<div class="msg">Falta configurar Firebase.<br>Abre el archivo <b>firebase-config.js</b> y pega los datos de tu proyecto (mira la guía LEEME.md).</div>';
   throw new Error("Firebase sin configurar");
@@ -33,9 +37,9 @@ function cargarProductos(catId) {
   );
 }
 
-const catsVisibles = () => categorias.filter(c => c.visible !== false).sort(byOrden);
+const catsVisibles = () => categorias.filter(c => EDITAR || c.visible !== false).sort(byOrden);
 const catsDe = gid => catsVisibles().filter(c => c.grupo === gid);
-const gruposVisibles = () => grupos.filter(g => g.visible !== false && catsDe(g.id).length).sort(byOrden);
+const gruposVisibles = () => grupos.filter(g => (EDITAR || g.visible !== false) && catsDe(g.id).length).sort(byOrden);
 
 /* ---------- apariencia ---------- */
 function tema() {
@@ -81,6 +85,7 @@ function pantallaCategoria(id) {
     '<div class="sech">' + (c.icono ? '<img alt="" src="' + c.icono + '">' : "") + '<h1 class="cg">' + esc(c.nombre) + "</h1></div>" +
     '<select id="cat"></select><section class="grid" id="grid"></section>' +
     '<div class="more" id="more"><button class="btn" id="mb">Cargar más productos</button></div>' +
+    (EDITAR ? '<div class="center"><button class="btn" id="nuevoAqui">+ Nuevo plato en esta categoría</button></div>' : "") +
     '<div class="acts"><a class="btn" href="' + atras + '">← Regresar</a><a class="btn" href="#/">Menú</a></div>';
   $("#cat").onchange = e => { filtro = e.target.value; mostrados = PAGINA; pintarGrilla(); };
   $("#mb").onclick = () => { mostrados += PAGINA; pintarGrilla(); };
@@ -100,7 +105,7 @@ function pintarGrilla() {
   const grid = $("#grid"); if (!grid) return;
   const c = categorias.find(x => x.id === vista.id); if (!c) return;
   if (!cargado[c.id]) { grid.innerHTML = '<div class="msg" style="grid-column:1/-1">Cargando…</div>'; $("#more").style.display = "none"; return; }
-  const todos = (prods[c.id] || []).filter(p => p.visible !== false)
+  const todos = (prods[c.id] || []).filter(p => EDITAR || p.visible !== false)
     .sort((a, b) => ordenEn(a, c.id) - ordenEn(b, c.id) || String(a.nombre).localeCompare(String(b.nombre), "es"));
   // lista desplegable de categorías (etiquetas) con su cantidad
   const cuentas = {}; todos.forEach(p => { const e = etiquetaDe(p, c); cuentas[e] = (cuentas[e] || 0) + 1; });
@@ -114,7 +119,7 @@ function pintarGrilla() {
   else grid.innerHTML = actuales.map((p, i) =>
     '<article class="card' + (p.agotado ? " ago" : "") + '" data-i="' + i + '"><div class="ph">' +
     (p.foto ? '<img alt="' + esc(p.nombre) + '" src="' + p.foto + '">' : "") + "</div><div><h3>" + esc(p.nombre) +
-    (p.agotado ? '<span class="tag">Agotado</span>' : "") + '</h3><div class="c">' + esc(etiquetaDe(p, c)) + "</div>" + precioHTML(p) + "</div></article>").join("");
+    (p.agotado ? '<span class="tag">Agotado</span>' : "") + (p.visible === false ? '<span class="tag">Oculto</span>' : "") + '</h3><div class="c">' + esc(etiquetaDe(p, c)) + "</div>" + precioHTML(p) + "</div></article>").join("");
   $("#more").style.display = lista.length > mostrados ? "block" : "none";
 }
 
@@ -129,7 +134,8 @@ function abrir(p) {
 const cerrar = () => $("#modal").classList.remove("show");
 document.addEventListener("click", e => {
   const t = e.target.closest && e.target.closest(".card");
-  if (t) { const p = actuales[+t.getAttribute("data-i")]; if (p) abrir(p); return; }
+  if (t) { const p = actuales[+t.getAttribute("data-i")]; if (p) { if (EDITAR) avisar({ editarPlato: p.id }); else abrir(p); } return; }
+  if (EDITAR && e.target.closest && e.target.closest("#nuevoAqui")) { avisar({ nuevoPlato: vista.id }); return; }
   if (e.target.id === "modal" || e.target.id === "mx") cerrar();
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });

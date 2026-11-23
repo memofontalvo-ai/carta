@@ -57,3 +57,5 @@ main{padding:18px;max-width:1000px;margin:0 auto}
 .prog{height:10px;background:#2a1e16;border-radius:6px;overflow:hidden;margin-top:12px}
 .prog i{display:block;height:100%;width:0;background:#f7a617;transition:.2s}
 @media(max-width:600px){.row{flex-wrap:wrap}.row .acts{width:100%;justify-content:flex-start}}
+
+#marcoCarta{width:100%;height:calc(100vh - 200px);height:calc(100svh - 200px);min-height:420px;border:1px solid #3a2c22;border-radius:12px;background:#000}

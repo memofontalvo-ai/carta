@@ -12,7 +12,7 @@ let grupos = [], categorias = [], productos = [], ajustes = { ...AJUSTES_BASE };
 let tab = "platos", fCat = "", fQ = "";
 let iniciado = false;
 
-const TABS = [["platos", "Platos"], ["categorias", "Categorías"], ["grupos", "Grupos"], ["ajustes", "Ajustes"], ["importar", "Importar"]];
+const TABS = [["platos", "Platos"], ["carta", "Editar en carta"], ["categorias", "Categorías"], ["grupos", "Grupos"], ["ajustes", "Ajustes"], ["importar", "Importar"]];
 
 /* ============ ayudas ============ */
 let tT;
@@ -80,8 +80,19 @@ function refrescar() {
 }
 function pintar() {
   $$("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.t === tab));
-  ({ platos: vPlatos, categorias: vCategorias, grupos: vGrupos, ajustes: vAjustes, importar: vImportar })[tab]();
+  ({ platos: vPlatos, carta: vCarta, categorias: vCategorias, grupos: vGrupos, ajustes: vAjustes, importar: vImportar })[tab]();
 }
+
+/* ============ EDITAR EN FORMATO CARTA ============ */
+function vCarta() {
+  $("#vista").innerHTML = '<p class="mut" style="margin-bottom:8px">Navega como en la carta y toca un plato para editarlo. Los platos ocultos también aparecen aquí.</p>' +
+    '<iframe id="marcoCarta" src="index.html?editar=1" title="Carta"></iframe>';
+}
+window.addEventListener("message", e => {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.editarPlato) { const p = productos.find(x => x.id === e.data.editarPlato); if (p) formPlato(p); }
+  else if (e.data.nuevoPlato) formPlato(null, e.data.nuevoPlato);
+});
 
 /* ============ PLATOS ============ */
 function opcionesCat() {
@@ -134,9 +145,9 @@ async function moverPlato(id, dir) {
 }
 
 let fotoForm = "", plato = null;
-function formPlato(p) {
+function formPlato(p, catPre) {
   plato = p; fotoForm = p?.foto || "";
-  const sel = new Set(p?.categorias || (fCat && fCat !== "_sin" ? [fCat] : []));
+  const sel = new Set(p?.categorias || (catPre ? [catPre] : fCat && fCat !== "_sin" ? [fCat] : []));
   const porGrupo = grupos.slice().sort(byOrden).map(g => {
     const cs = categorias.filter(c => c.grupo === g.id).sort(byOrden);
     return cs.length ? "<h4>" + esc(g.nombre) + "</h4>" + cs.map(c => '<label class="chk"><input type="checkbox" name="cat" value="' + c.id + '"' + (sel.has(c.id) ? " checked" : "") + "> " + esc(c.nombre) + "</label>").join("") : "";
