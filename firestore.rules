@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // CAMBIA el correo de abajo por el correo con el que vas a entrar al panel.
+    // Si quieres más administradores, sepáralos con coma: ["uno@gmail.com", "dos@gmail.com"]
+    function esAdmin() {
+      return request.auth != null
+        && request.auth.token.email in ["memofontalvo@gmail.com"];
+    }
+
+    // Todo el mundo puede VER la carta; solo el administrador puede CAMBIARLA.
+    match /grupos/{id}     { allow read: if true; allow write: if esAdmin(); }
+    match /categorias/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /productos/{id}  { allow read: if true; allow write: if esAdmin(); }
+    match /config/{id}     { allow read: if true; allow write: if esAdmin(); }
+  }
+}

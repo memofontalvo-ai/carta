@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel · Carta La Matriarca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Calistoga&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head><body>
+
+<section id="login" class="loginbox" hidden>
+  <h1 class="cal">La Matriarca</h1>
+  <p>Panel de la carta · Barranquilla</p>
+  <form id="fLogin">
+    <input id="email" type="email" placeholder="Correo" autocomplete="username" required>
+    <input id="pass" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+    <button class="b pri" type="submit">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="panel" hidden>
+  <header class="bar">
+    <strong class="cal">Panel de la carta</strong>
+    <span class="sp"></span>
+    <span id="quien" class="mut"></span>
+    <a class="b" href="index.html" target="_blank">Ver carta</a>
+    <button class="b" id="salir">Salir</button>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="vista"></main>
+</div>
+
+<div class="ov" id="ov" hidden></div>
+<div class="toast" id="toast"></div>
+<script type="module" src="admin.js"></script>
+</body></html>
