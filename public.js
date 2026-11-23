@@ -1,6 +1,7 @@
 // Carta pública: lee grupos, categorías y platos desde Firestore.
 import { configured, db, collection, doc, onSnapshot, query, where } from "./db.js";
 import { $, esc, fmt, byOrden, AJUSTES_BASE } from "./shared.js";
+import { VERSION } from "./version.js";
 
 const app = $("#app");
 if (!configured) {
@@ -42,7 +43,7 @@ function tema() {
   $("#logoLink").innerHTML = ajustes.logo
     ? '<img class="logo" alt="La Matriarca" src="' + ajustes.logo + '">'
     : '<span class="logo-txt">La Matriarca</span>';
-  $("#pie").textContent = ajustes.pie || "";
+  $("#pie").innerHTML = esc(ajustes.pie || "") + '<div class="ver">v' + VERSION + '</div>';
 }
 
 /* ---------- pantallas ---------- */

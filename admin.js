@@ -4,6 +4,7 @@ import {
   collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, writeBatch, arrayRemove
 } from "./db.js";
 import { $, $$, esc, fmt, byOrden, comprimirImagen, comprimirPNG, AJUSTES_BASE } from "./shared.js";
+import { VERSION, FECHA, CAMBIOS } from "./version.js";
 import { extraerDeHTML, construirDatos } from "./seed.js";
 
 /* ============ estado ============ */
@@ -70,6 +71,7 @@ function arrancar() {
   onSnapshot(doc(db, "config", "general"), s => { ajustes = { ...AJUSTES_BASE, ...(s.data() || {}) }; if (tab === "ajustes") pintar(); }, () => {});
   $("#vista").addEventListener("click", clicVista);
   $("#ov").addEventListener("click", e => { if (e.target.id === "ov") cerrarModal(); });
+  $("#verBtn").addEventListener("click", () => modal("<h3>Historial de versiones</h3>" + CAMBIOS.map(c => "<p><b>v" + esc(c[0]) + "</b> · " + esc(c[1]) + "<br>" + esc(c[2]) + "</p>").join("") + '<button class="b" data-a="cancelar">Cerrar</button>'));
   pintar();
 }
 function refrescar() {
@@ -345,6 +347,7 @@ async function clicVista(e) {
   }
 }
 // Acciones dentro de las ventanas emergentes
+document.querySelectorAll(".verTxt").forEach(e => e.textContent = "v" + VERSION);
 document.addEventListener("click", e => {
   const b = e.target.closest("#ov [data-a]"); if (!b) return;
   switch (b.dataset.a) {

@@ -75,3 +75,6 @@ Los cambios se ven en la carta al instante, sin volver a publicar nada.
 - *“Tu correo no tiene permiso…”*: el correo de `firestore.rules` no es el mismo con el que entraste, o no publicaste las reglas.
 - *La carta dice “La carta todavía no tiene platos”*: aún no hiciste la importación (Parte C) o no hay categorías visibles.
 - *No puedo entrar al panel*: revisa que el usuario exista en Authentication y que Correo/contraseña esté habilitado.
+
+## Versiones
+Cada vez que se cambie la carta, se edita `version.js`: se sube el número (`VERSION`), la `FECHA` y se agrega una línea al inicio de `CAMBIOS`. La versión se ve en el pie de la carta ("v1.1") y en el panel (toca la versión para ver el historial).
