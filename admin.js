@@ -50,6 +50,12 @@ if (!configured) {
     if (u) { $("#login").hidden = true; $("#panel").hidden = false; $("#quien").textContent = u.email; arrancar(); }
     else { $("#panel").hidden = true; $("#login").hidden = false; }
   });
+  $("#ojo").addEventListener("click", () => {
+    const i = $("#pass"), ver = i.type === "password";
+    i.type = ver ? "text" : "password";
+    $("#ojo").classList.toggle("on", ver);
+    $("#ojo").title = ver ? "Ocultar contraseña" : "Mostrar contraseña";
+  });
   $("#fLogin").addEventListener("submit", async e => {
     e.preventDefault(); $("#loginErr").textContent = "";
     try { await signInWithEmailAndPassword(auth, $("#email").value.trim(), $("#pass").value); }

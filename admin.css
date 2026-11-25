@@ -59,3 +59,6 @@ main{padding:18px;max-width:1000px;margin:0 auto}
 @media(max-width:600px){.row{flex-wrap:wrap}.row .acts{width:100%;justify-content:flex-start}}
 
 #marcoCarta{width:100%;height:calc(100vh - 200px);height:calc(100svh - 200px);min-height:420px;border:1px solid #3a2c22;border-radius:12px;background:#000}
+.passw{position:relative}.passw input{padding-right:46px}
+.ojo{position:absolute;right:4px;top:3px;height:36px;width:40px;background:none;border:0;color:#a99b8f;font-size:20px;cursor:pointer;line-height:1}
+.ojo.on{color:#f7a617}
